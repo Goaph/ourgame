@@ -213,9 +213,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e7cc69db8da1f4da2ab436bdf28e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minY: -30
-  maxY: 30
-  cameraVerticalSpeed: 2
+  clampInDegrees: {x: 360, y: 130}
+  lockCursor: 1
+  sensitivity: {x: 2, y: 2}
+  smoothing: {x: 3, y: 3}
+  targetDirection: {x: 0, y: 0}
+  targetCharacterDirection: {x: 0, y: 0}
+  characterBody: {fileID: 380494776}
+--- !u!1 &380494776 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1730300040008822, guid: 569cd8cc18af83543a37d94c0a361151,
+    type: 2}
+  m_PrefabInternal: {fileID: 2104594037}
 --- !u!1 &447291389
 GameObject:
   m_ObjectHideFlags: 0
