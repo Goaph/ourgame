@@ -25,11 +25,7 @@ public class PlayerMovement : MonoBehaviour {
         player.Translate(0, 0, moveForward);
         player.Translate(moveSide, 0, 0);
 
-        //Mouse-Look 
-        //Rotating the Character based off mouse position on the Y axis
-        float h = cameraHorizontalSpeed * Input.GetAxis("Mouse X");
-        player.Rotate(0, h, 0);
-
+        
         
 
     
