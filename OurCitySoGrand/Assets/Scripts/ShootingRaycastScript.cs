@@ -26,7 +26,7 @@ public class ShootingRaycastScript : MonoBehaviour {
         RaycastHit hit; //a variable used to store information on the object hit by the ray
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range)) // shoots a ray forward from the position of the camera, stores the target hit info in the "hit" variable, only goes the 'range' distance, returns true if something is hit
         {
-            
+            //PUT THIS INSIDE THE OBJECT GETTING HIT!
             Debug.Log("Raycast hit: " + hit.transform.name);
             HittableTarget hitObj = hit.transform.GetComponent<HittableTarget>(); //checks if the object hit is part of the HittableTarget Class
             if(hitObj != null) // if it is part of the class, take damage
