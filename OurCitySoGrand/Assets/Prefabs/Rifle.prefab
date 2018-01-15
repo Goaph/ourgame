@@ -89,7 +89,6 @@ GameObject:
   - component: {fileID: 4629102891600584}
   - component: {fileID: 198076742657076178}
   - component: {fileID: 199297885892535228}
-  - component: {fileID: 114050701135187808}
   m_Layer: 0
   m_Name: ShootingMuzzleFlash
   m_TagString: Untagged
@@ -576,17 +575,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1239931741623830}
   m_Mesh: {fileID: 4300000, guid: 1e4688bbd54c3994da6bbdbd4e513b10, type: 3}
---- !u!114 &114050701135187808
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1384659406647012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114328309786653172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -598,8 +586,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8633b574e8a7eca4ab0fe1c9e70f0941, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 5
   range: 100
+  impactForce: 200
   cam: {fileID: 0}
   muzzleflash: {fileID: 198076742657076178}
 --- !u!198 &198076742657076178
@@ -662,7 +651,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1769828699
+  randomSeed: -312267588
   InitialModule:
     serializedVersion: 3
     enabled: 1
