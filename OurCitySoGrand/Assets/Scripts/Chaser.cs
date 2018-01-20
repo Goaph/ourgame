@@ -11,7 +11,7 @@ public class Chaser : MonoBehaviour {
     public Transform patrolGoal2;
 
     public float speed = 10f;
-    public float stopDistance = 3f;
+    public float patrolSwitchDistance = 3f;
 
     
     private float rayDistanceIncrement = 1f;
@@ -25,9 +25,9 @@ public class Chaser : MonoBehaviour {
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        currentPatrol = patrolGoal1;
-        agent.SetDestination(currentPatrol.position);
+        agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
+        currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
+        agent.SetDestination(currentPatrol.position); // sets the destination to current patrol
     }
 
     
@@ -53,7 +53,7 @@ public class Chaser : MonoBehaviour {
     void NavMeshPatrolCheck ()
     {
         
-        if(agent.remainingDistance < stopDistance)
+        if(agent.remainingDistance < patrolSwitchDistance) // If the remaining distance is less than the switch distance, switch the set destination of the chaser
         {
             if(currentPatrol == patrolGoal1)
             {
@@ -68,15 +68,20 @@ public class Chaser : MonoBehaviour {
     }   
       
        
-    
+    //FOLLOW PLAYER
 
     void PlayerFollow()
     {       
         
-        agent.SetDestination(player.position);
-        
+        agent.SetDestination(player.position); // sets the follow destination of the Navmesh agent to the player
+        if(agent.remainingDistance < 3f)
+        {
+            chaser.LookAt(player);
+        }
     }
 
+
+    //SEND OUT RAYCASTS THAT FUNCTION AS 'VISION'
     void VisionRaycasting()
     {
 
@@ -112,7 +117,7 @@ public class Chaser : MonoBehaviour {
                     behaviourPatrol = false;
                 }
             }
-            Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes
+            Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
 
 
 

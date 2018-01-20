@@ -236,6 +236,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114986500027633012, guid: 569cd8cc18af83543a37d94c0a361151,
+        type: 2}
+      propertyPath: impactForce
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 569cd8cc18af83543a37d94c0a361151, type: 2}
   m_IsPrefabParent: 0
@@ -346,7 +351,7 @@ MonoBehaviour:
   patrolGoal1: {fileID: 1616949367}
   patrolGoal2: {fileID: 904436135}
   speed: 5
-  stopDistance: 4
+  patrolSwitchDistance: 3
 --- !u!54 &479196296
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -441,7 +446,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 2
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

@@ -5,7 +5,7 @@ public class ShootingRaycastScript : MonoBehaviour {
 
     public float damage = 10f; // How much damage the gun deals
     public float range = 100f; // The range of the bullets/ the distance the raycast travels
-    public float impactForce = 40f;
+    public float impactForce = 30f;
 
     public Camera cam;
     public ParticleSystem muzzleflash;
@@ -35,7 +35,7 @@ public class ShootingRaycastScript : MonoBehaviour {
                 hitObj.TakeDamage(damage);
 
             }
-            if(hit.rigidbody != null)
+            if(hit.rigidbody != null) //adds a rigidbody force
             {
                 Debug.Log("Adding Force!");
                 hit.rigidbody.AddForce(cam.transform.forward * impactForce);
