@@ -18,36 +18,66 @@ public class Chaser : MonoBehaviour {
     private float rayAngleIncrement = 5f;
 
     private NavMeshAgent agent;
+    private Transform currentPatrol;
+
+    private bool behaviourPatrol = true;
 
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        currentPatrol = patrolGoal1;
+        agent.SetDestination(currentPatrol.position);
     }
 
     
 
     void Update ()
     {
-        UseRaycastsForNavigation();
+        
+        if(behaviourPatrol == true)
+        {
+            NavMeshPatrolCheck();
+        } else
+        {
+            PlayerFollow();
+        }
+        VisionRaycasting();
+        
 
        // PlayerFollow();
     }
 
         
-
+    //PATROLLING BETWEEN TWO GOALS
+    void NavMeshPatrolCheck ()
+    {
+        
+        if(agent.remainingDistance < stopDistance)
+        {
+            if(currentPatrol == patrolGoal1)
+            {
+                currentPatrol = patrolGoal2;
+            } else
+            {
+                currentPatrol = patrolGoal1;
+            }
+            agent.SetDestination(currentPatrol.position);
+        }
        
+    }   
       
        
     
 
     void PlayerFollow()
     {       
-        chaser.LookAt(player); // Makes the chaser look at the player
+        
+        agent.SetDestination(player.position);
         
     }
 
-    void UseRaycastsForNavigation()
+    void VisionRaycasting()
     {
 
         float angleOffset = -90 - rayAngleIncrement; //Starts off the angle at the far left, increments by 15 so angleOffset actually starts at -90;
@@ -72,15 +102,17 @@ public class Chaser : MonoBehaviour {
 
             RaycastHit hit;            //creating a hit variable to store the collision data of the ray in
 
-            Debug.DrawRay(chaser.position, newAngle * rayLength, Color.green); //Draws the rays for debugging purposes
+            
 
             if (Physics.Raycast(chaser.position, newAngle, out hit, rayLength)) // Checks if the Ray has hit something
             {
-                if (hit.collider.tag == "Terrain") //Checks if the Navigation rays have hit terrain
+                if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit terrain
                 {
-                    Navigate(newAngle); // passes the angle of the raycast into the Navigate Function
+                    Debug.Log("Player came into our line of sight.");
+                    behaviourPatrol = false;
                 }
             }
+            Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes
 
 
 
@@ -88,10 +120,6 @@ public class Chaser : MonoBehaviour {
 
     }
 
-    void Navigate (Vector3 rotationAngle)
-    {
-        Debug.Log("Navigating.");
-
-    }
+    
 
 }
