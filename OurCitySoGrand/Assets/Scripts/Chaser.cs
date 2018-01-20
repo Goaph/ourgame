@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Chaser : MonoBehaviour {
 
     public Transform chaser;
     public Transform player;
+    public Transform patrolGoal1;
+    public Transform patrolGoal2;
 
     public float speed = 10f;
     public float stopDistance = 3f;
@@ -13,18 +16,22 @@ public class Chaser : MonoBehaviour {
     
     private float rayDistanceIncrement = 1f;
     private float rayAngleIncrement = 5f;
-    
+
+    private NavMeshAgent agent;
+
+
+    private void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
 
     
 
-    //13 nav rays
-    //when a counter reaches seven, flip Ray distanceincrement to a negative;
-
-	void Update ()
+    void Update ()
     {
         UseRaycastsForNavigation();
 
-        PlayerFollow();
+       // PlayerFollow();
     }
 
         
@@ -35,19 +42,9 @@ public class Chaser : MonoBehaviour {
     
 
     void PlayerFollow()
-    {
-  
-        //BASIC PLAYER FOLLOW
+    {       
         chaser.LookAt(player); // Makes the chaser look at the player
-        if (Vector3.Distance(chaser.position, player.position) > stopDistance) // Moves the chaser as long as they are out of the distance range to stop
-        {
-
-            chaser.Translate(0, 0, speed * Time.deltaTime); // Translating the Cube forward by its speed multiplied by deltaTime
-        }
-        else
-        {
-            Debug.Log("HitPlayer"); //player has been hit
-        }
+        
     }
 
     void UseRaycastsForNavigation()
