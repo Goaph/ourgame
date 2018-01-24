@@ -12,6 +12,7 @@ public class Chaser : MonoBehaviour {
 
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
+    public float slerpRotateSpeed = 0.3f;
 
     
     private float rayDistanceIncrement = 1f;
@@ -71,13 +72,10 @@ public class Chaser : MonoBehaviour {
     //FOLLOW PLAYER
 
     void PlayerFollow()
-    {       
-        
+    {
+        chaser.LookAt(player); // makes sure that the chaser looks at the player
         agent.SetDestination(player.position); // sets the follow destination of the Navmesh agent to the player
-        if(agent.remainingDistance < 3f)
-        {
-            chaser.LookAt(player);
-        }
+       
     }
 
 
@@ -123,6 +121,11 @@ public class Chaser : MonoBehaviour {
 
         }
 
+    }
+
+    public void SetBehaviourPatrol(bool value)
+    {
+        behaviourPatrol = value;
     }
 
     
