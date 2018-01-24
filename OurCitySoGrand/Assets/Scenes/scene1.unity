@@ -241,6 +241,16 @@ Prefab:
       propertyPath: impactForce
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 114635542810865362, guid: 569cd8cc18af83543a37d94c0a361151,
+        type: 2}
+      propertyPath: forwardSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 114635542810865362, guid: 569cd8cc18af83543a37d94c0a361151,
+        type: 2}
+      propertyPath: sideSpeed
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 569cd8cc18af83543a37d94c0a361151, type: 2}
   m_IsPrefabParent: 0
@@ -353,6 +363,9 @@ MonoBehaviour:
   speed: 5
   patrolSwitchDistance: 3
   slerpRotateSpeed: 0.3
+  searchDistance: 20
+  LOSDistance: 45
+  behaviour: 0
 --- !u!54 &479196296
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -13,19 +13,27 @@ public class Chaser : MonoBehaviour {
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
     public float slerpRotateSpeed = 0.3f;
+    public float searchDistance = 20f;
+    public float LOSDistance = 45f;
 
     
     private float rayDistanceIncrement = 1f;
     private float rayAngleIncrement = 5f;
+    private bool searchBreadCrumb = false;
+    private Vector3 BreadCrumb;
+    
 
     private NavMeshAgent agent;
     private Transform currentPatrol;
 
-    private bool behaviourPatrol = true;
+    public enum Behaviours { patrol, chase, search};
+    public Behaviours behaviour;
 
 
     private void Start()
     {
+        
+        behaviour = Behaviours.patrol;
         agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
         currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
         agent.SetDestination(currentPatrol.position); // sets the destination to current patrol
@@ -35,18 +43,24 @@ public class Chaser : MonoBehaviour {
 
     void Update ()
     {
-        
-        if(behaviourPatrol == true)
+       
+
+        if (behaviour == Behaviours.patrol)
         {
             NavMeshPatrolCheck();
-        } else
+            VisionRaycasting();
+
+        } else if (behaviour == Behaviours.chase)
         {
-            PlayerFollow();
+            PlayerChase();
+        } else if (behaviour == Behaviours.search)
+        {
+            SearchBehaviour();
         }
-        VisionRaycasting();
         
 
-       // PlayerFollow();
+
+       
     }
 
         
@@ -71,11 +85,11 @@ public class Chaser : MonoBehaviour {
        
     //FOLLOW PLAYER
 
-    void PlayerFollow()
+    void PlayerChase()
     {
         chaser.LookAt(player); // makes sure that the chaser looks at the player
         agent.SetDestination(player.position); // sets the follow destination of the Navmesh agent to the player
-       
+        ChasingSearchingTransition();
     }
 
 
@@ -109,10 +123,10 @@ public class Chaser : MonoBehaviour {
 
             if (Physics.Raycast(chaser.position, newAngle, out hit, rayLength)) // Checks if the Ray has hit something
             {
-                if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit terrain
+                if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit the player
                 {
                     Debug.Log("Player came into our line of sight.");
-                    behaviourPatrol = false;
+                    behaviour = Behaviours.chase;
                 }
             }
             Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
@@ -123,11 +137,44 @@ public class Chaser : MonoBehaviour {
 
     }
 
-    public void SetBehaviourPatrol(bool value)
+    void ChasingSearchingTransition()
     {
-        behaviourPatrol = value;
+
+        Vector3 LOSangle = chaser.forward * Vector3.Angle(chaser.position, player.position);
+
+        float rayLength = searchDistance;
+               
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(chaser.position, LOSangle, out hit, rayLength))
+
+        {
+            if(hit.collider.tag != "Player")
+            {
+                behaviour = Behaviours.search;
+            }
+            
+        }
+        Debug.DrawRay(chaser.position, LOSangle, Color.red);
+
     }
 
+    void SearchBehaviour()
+    {
+        if(searchBreadCrumb == false)
+        {
+            searchBreadCrumb = true;
+            BreadCrumb = player.position;
+
+        }
+        agent.SetDestination(BreadCrumb);
+    }
     
+
+    //TO DO: 
+    // add comments
+    // Make a Looking around behaviour
+    // Make a transition back to patrol
 
 }

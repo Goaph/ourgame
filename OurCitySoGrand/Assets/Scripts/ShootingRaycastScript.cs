@@ -78,7 +78,7 @@ public class ShootingRaycastScript : MonoBehaviour {
         
         if (hitObj != null)
         {
-            hitObj.SetBehaviourPatrol(false); // sets the Behaviour Patrol to false
+            hitObj.behaviour = Chaser.Behaviours.chase; // sets the Behaviour Patrol to false
             Debug.Log("Triggering the PlayerFollow.");
         }
     }
