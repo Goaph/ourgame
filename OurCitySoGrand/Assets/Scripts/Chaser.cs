@@ -10,6 +10,13 @@ public class Chaser : MonoBehaviour {
     public Transform patrolGoal1;
     public Transform patrolGoal2;
 
+    public GameObject breadcrumb;
+    private GameObject bc;
+
+    public Material patrol;
+    public Material chase;
+    public Material search;
+
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
     public float slerpRotateSpeed = 0.3f;
@@ -17,10 +24,12 @@ public class Chaser : MonoBehaviour {
     public float LOSDistance = 45f;
 
     
+    
     private float rayDistanceIncrement = 1f;
     private float rayAngleIncrement = 5f;
     private bool searchBreadCrumb = false;
-    private Vector3 BreadCrumb;
+
+   // private Vector3 BreadCrumb;
     
 
     private NavMeshAgent agent;
@@ -32,8 +41,8 @@ public class Chaser : MonoBehaviour {
 
     private void Start()
     {
-        
-        behaviour = Behaviours.patrol;
+
+        PatrolTransition();
         agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
         currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
         agent.SetDestination(currentPatrol.position); // sets the destination to current patrol
@@ -43,8 +52,8 @@ public class Chaser : MonoBehaviour {
 
     void Update ()
     {
-       
 
+        Debug.Log(behaviour);
         if (behaviour == Behaviours.patrol)
         {
             NavMeshPatrolCheck();
@@ -57,11 +66,14 @@ public class Chaser : MonoBehaviour {
         {
             SearchBehaviour();
         }
-        
+
+        DestroyBreadcrumb();
 
 
-       
+
     }
+
+    
 
         
     //PATROLLING BETWEEN TWO GOALS
@@ -89,7 +101,7 @@ public class Chaser : MonoBehaviour {
     {
         chaser.LookAt(player); // makes sure that the chaser looks at the player
         agent.SetDestination(player.position); // sets the follow destination of the Navmesh agent to the player
-        ChasingSearchingTransition();
+        ChasingLOSCheck();
     }
 
 
@@ -126,7 +138,7 @@ public class Chaser : MonoBehaviour {
                 if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit the player
                 {
                     Debug.Log("Player came into our line of sight.");
-                    behaviour = Behaviours.chase;
+                    ChaseTransition();
                 }
             }
             Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
@@ -137,7 +149,9 @@ public class Chaser : MonoBehaviour {
 
     }
 
-    void ChasingSearchingTransition()
+    
+
+    void ChasingLOSCheck()
     {
 
         Vector3 LOSangle = chaser.forward * Vector3.Angle(chaser.position, player.position);
@@ -152,7 +166,7 @@ public class Chaser : MonoBehaviour {
         {
             if(hit.collider.tag != "Player")
             {
-                behaviour = Behaviours.search;
+                SearchTransition();
             }
             
         }
@@ -165,12 +179,40 @@ public class Chaser : MonoBehaviour {
         if(searchBreadCrumb == false)
         {
             searchBreadCrumb = true;
-            BreadCrumb = player.position;
+            bc = (GameObject) Instantiate(breadcrumb, player.position, Quaternion.identity);
+            agent.SetDestination(bc.transform.position);
 
         }
-        agent.SetDestination(BreadCrumb);
+        
     }
-    
+
+    private void DestroyBreadcrumb()
+    {
+        if(behaviour != Behaviours.search)
+        {
+            searchBreadCrumb = false;
+            Destroy(bc);
+        }
+    }
+
+    public void ChaseTransition()
+    {
+        behaviour = Behaviours.chase;
+        gameObject.GetComponent<Renderer>().material = chase;
+    }
+
+    public void SearchTransition()
+    {
+        behaviour = Behaviours.search;
+        gameObject.GetComponent<Renderer>().material = search;
+    }
+
+    public void PatrolTransition()
+    {
+        behaviour = Behaviours.patrol;
+        gameObject.GetComponent<Renderer>().material = patrol;
+    }
+
 
     //TO DO: 
     // add comments

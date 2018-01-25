@@ -74,12 +74,14 @@ public class ShootingRaycastScript : MonoBehaviour {
 
     void MakeChaserLookWhenHit (RaycastHit hit)
     {
+        
         Chaser hitObj = hit.transform.GetComponent<Chaser>(); // Checks if the target hit is a Chaser
         
         if (hitObj != null)
         {
-            hitObj.behaviour = Chaser.Behaviours.chase; // sets the Behaviour Patrol to false
-            Debug.Log("Triggering the PlayerFollow.");
+            
+            hitObj.ChaseTransition(); // sets the Behaviour Patrol to false
+            
         }
     }
 }
