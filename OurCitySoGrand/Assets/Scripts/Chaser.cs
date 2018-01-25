@@ -17,6 +17,7 @@ public class Chaser : MonoBehaviour {
     public Material chase;
     public Material search;
 
+    public float lookRotationSpeed = 50f;
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
     public float slerpRotateSpeed = 0.3f;
@@ -28,9 +29,12 @@ public class Chaser : MonoBehaviour {
     private float rayDistanceIncrement = 1f;
     private float rayAngleIncrement = 5f;
     private bool searchBreadCrumb = false;
+    private bool gotPlayerPos = false;
 
-   // private Vector3 BreadCrumb;
-    
+    private Vector3 lookAtPlayerPosWhenSearchPos = Vector3.forward;
+
+
+
 
     private NavMeshAgent agent;
     private Transform currentPatrol;
@@ -52,8 +56,7 @@ public class Chaser : MonoBehaviour {
 
     void Update ()
     {
-
-        Debug.Log(behaviour);
+               
         if (behaviour == Behaviours.patrol)
         {
             NavMeshPatrolCheck();
@@ -65,9 +68,10 @@ public class Chaser : MonoBehaviour {
         } else if (behaviour == Behaviours.search)
         {
             SearchBehaviour();
+            VisionRaycasting();
         }
 
-        DestroyBreadcrumb();
+        ResetSearchVariables();
 
 
 
@@ -111,7 +115,7 @@ public class Chaser : MonoBehaviour {
 
         float angleOffset = -90 - rayAngleIncrement; //Starts off the angle at the far left, increments by 15 so angleOffset actually starts at -90;
 
-        float rayLength = 2; // sets the Initial Length of the First Ra
+        float rayLength = 1; // sets the Initial Length of the First Ra
         rayDistanceIncrement = Mathf.Abs(rayAngleIncrement); //makes the Distance Increment Positive so that it starts off correctly
 
 
@@ -135,11 +139,7 @@ public class Chaser : MonoBehaviour {
 
             if (Physics.Raycast(chaser.position, newAngle, out hit, rayLength)) // Checks if the Ray has hit something
             {
-                if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit the player
-                {
-                    Debug.Log("Player came into our line of sight.");
-                    ChaseTransition();
-                }
+                HasHitPlayer(hit);
             }
             Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
 
@@ -149,6 +149,14 @@ public class Chaser : MonoBehaviour {
 
     }
 
+    void HasHitPlayer(RaycastHit hit)
+    {
+        if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit the player
+        {
+            Debug.Log("Player came into our line of sight.");
+            ChaseTransition();
+        }
+    }
     
 
     void ChasingLOSCheck()
@@ -181,17 +189,40 @@ public class Chaser : MonoBehaviour {
             searchBreadCrumb = true;
             bc = (GameObject) Instantiate(breadcrumb, player.position, Quaternion.identity);
             agent.SetDestination(bc.transform.position);
+            
 
         }
+        if(agent.remainingDistance < 0.5f)
+        {
+            if(gotPlayerPos == false)
+            {
+                lookAtPlayerPosWhenSearchPos = player.position;
+                gotPlayerPos = true;
+            }
+
+            Debug.Log("Reached the Breacrumb, about to rotate!");
+            Vector3 targetDir = lookAtPlayerPosWhenSearchPos - transform.position;
+            float step = lookRotationSpeed * Time.deltaTime;
+            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0F);
+            Debug.DrawRay(transform.position, newDir, Color.red);
+            transform.rotation = Quaternion.LookRotation(newDir);
+            if (Vector3.Angle(targetDir, chaser.forward) < 2f)
+            {
+                PatrolTransition();
+            }
+
+        }
+
         
     }
 
-    private void DestroyBreadcrumb()
+    private void ResetSearchVariables()
     {
         if(behaviour != Behaviours.search)
         {
             searchBreadCrumb = false;
             Destroy(bc);
+            gotPlayerPos = false;
         }
     }
 

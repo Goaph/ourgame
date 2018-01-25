@@ -244,12 +244,17 @@ Prefab:
     - target: {fileID: 114635542810865362, guid: 569cd8cc18af83543a37d94c0a361151,
         type: 2}
       propertyPath: forwardSpeed
-      value: 30
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 114635542810865362, guid: 569cd8cc18af83543a37d94c0a361151,
         type: 2}
       propertyPath: sideSpeed
-      value: 30
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 54650038968811994, guid: 569cd8cc18af83543a37d94c0a361151,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 36
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 569cd8cc18af83543a37d94c0a361151, type: 2}
@@ -364,6 +369,7 @@ MonoBehaviour:
   patrol: {fileID: 2100000, guid: 33fe7b0c30f1c394396a6bc443cc8be6, type: 2}
   chase: {fileID: 2100000, guid: 2bb1db45ee1dd4b438e7af2fcb657af5, type: 2}
   search: {fileID: 2100000, guid: 38eda64bcf4f4224aaa1e2d0e9f2ee88, type: 2}
+  lookRotationSpeed: 50
   speed: 5
   patrolSwitchDistance: 3
   slerpRotateSpeed: 0.3
@@ -383,7 +389,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!23 &479196297
 MeshRenderer:
