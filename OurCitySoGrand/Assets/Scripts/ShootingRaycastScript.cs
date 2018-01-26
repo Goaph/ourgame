@@ -3,15 +3,13 @@ using UnityEngine;
 
 public class ShootingRaycastScript : MonoBehaviour {
 
-    public float damage = 10f; // How much damage the gun deals
+    private float damage = 5f; // How much damage the gun deals
     public float range = 100f; // The range of the bullets/ the distance the raycast travels
-    public float impactForce = 30f;
+    private float impactForce = 0.1f;
 
     public Camera cam;
-    public ParticleSystem muzzleflash;
-
-    private bool shouldKnockBackInFixedUpdate = false;
-    private Rigidbody targetHit;
+    public ParticleSystem muzzleflash;  
+    
     
 
 	void Update () {
@@ -21,14 +19,7 @@ public class ShootingRaycastScript : MonoBehaviour {
         }
 	}
 
-    private void FixedUpdate()
-    {
-        if (shouldKnockBackInFixedUpdate == true)
-        {
-            targetHit.AddForce(cam.transform.forward * impactForce);
-            shouldKnockBackInFixedUpdate = false;
-        }
-    }
+    
 
     //Function that actually shoots the rays/Bullets
     void Shoot()
@@ -39,11 +30,10 @@ public class ShootingRaycastScript : MonoBehaviour {
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range)) // shoots a ray forward from the position of the camera, stores the target hit info in the "hit" variable, only goes the 'range' distance, returns true if something is hit
         {
             
-            Debug.Log("Raycast hit: " + hit.transform.name);
+            Debug.Log("Bullet hit: " + hit.transform.name);
             
             DamageHittableTarget(hit); // deals with Hittable Targets
-
-            BulletRigidbodyKnockback(hit); // Knocks back objects with rigidbodies.
+                       
             MakeChaserLookWhenHit(hit); // Makes the Chaser look when hit
 
 
@@ -52,26 +42,17 @@ public class ShootingRaycastScript : MonoBehaviour {
 
     void DamageHittableTarget(RaycastHit hit)
     {
-        HittableTarget hitObj = hit.transform.GetComponent<HittableTarget>(); //checks if the object hit is part of the HittableTarget Class
+        LivingCreature hitObj = hit.transform.GetComponent<LivingCreature>(); //checks if the object hit is part of the LivingCreature Class
         if (hitObj != null) // if it is part of the class, take damage
         {
 
             hitObj.TakeDamage(damage);
+            hitObj.KnockBackWhenShot(impactForce);
 
         }
     }
 
-    void BulletRigidbodyKnockback(RaycastHit hit)
-    {
-       
-        if (hit.rigidbody != null) //adds a rigidbody force
-        {
-            shouldKnockBackInFixedUpdate = true;
-            targetHit = hit.rigidbody;            
-           
-        }
-    }
-
+    //Add this to the LIVINGCREATURE class eventually
     void MakeChaserLookWhenHit (RaycastHit hit)
     {
         
