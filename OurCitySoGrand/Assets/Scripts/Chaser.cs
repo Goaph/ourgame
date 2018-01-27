@@ -142,8 +142,12 @@ public class Chaser : LivingCreature {
             if (Physics.Raycast(chaser.position, newAngle, out hit, rayLength)) // Checks if the Ray has hit something
             {
                 HasHitPlayer(hit);
+                Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green);
+            } else
+            {
+                Debug.DrawRay(chaser.position, newAngle * rayLength, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
             }
-            Debug.DrawRay(chaser.position, newAngle * rayLength, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
+            
 
 
 
