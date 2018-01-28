@@ -4075,7 +4075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ae329b8ac58ba4ca5bd429a7173476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 50
+  health: 300
   chaser: {fileID: 479196300}
   player: {fileID: 380494782}
   patrolGoal1: {fileID: 1616949367}
@@ -4084,13 +4084,13 @@ MonoBehaviour:
   patrol: {fileID: 2100000, guid: 33fe7b0c30f1c394396a6bc443cc8be6, type: 2}
   chase: {fileID: 2100000, guid: 2bb1db45ee1dd4b438e7af2fcb657af5, type: 2}
   search: {fileID: 2100000, guid: 38eda64bcf4f4224aaa1e2d0e9f2ee88, type: 2}
-  chaserHealth: 400
   lookRotationSpeed: 50
   speed: 5
   patrolSwitchDistance: 3
   slerpRotateSpeed: 0.3
-  searchDistance: 20
-  LOSDistance: 45
+  searchDistance: 80
+  visionAngle: 30
+  visionLength: 40
   behaviour: 0
 --- !u!54 &479196296
 Rigidbody:
@@ -4182,7 +4182,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 8
+  m_Speed: 13
   m_Acceleration: 60
   avoidancePriority: 50
   m_AngularSpeed: 60

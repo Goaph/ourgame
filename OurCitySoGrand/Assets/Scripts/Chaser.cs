@@ -18,26 +18,23 @@ public class Chaser : LivingCreature {
     public Material chase;
     public Material search;
 
-    public float chaserHealth = 200f;
+   
     public float lookRotationSpeed = 50f;
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
     public float slerpRotateSpeed = 0.3f;
     public float searchDistance = 20f;
-    public float LOSDistance = 45f;
+   
 
+    public float visionAngle = 20f;
+    public float visionLength = 10f;
     
     
-    private float rayDistanceIncrement = 3f;
-    private float rayAngleIncrement = 5f;
     private bool searchBreadCrumb = false;
     private bool gotPlayerPos = false;
 
     private Vector3 lookAtPlayerPosWhenSearchPos = Vector3.forward;
-
-
-
-
+    
     private NavMeshAgent agent;
     private Transform currentPatrol;
 
@@ -47,7 +44,7 @@ public class Chaser : LivingCreature {
 
     private void Start()
     {
-        health = chaserHealth;
+        
         PatrolTransition();
         agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
         currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
@@ -111,71 +108,82 @@ public class Chaser : LivingCreature {
     }
 
 
-    //SEND OUT RAYCASTS THAT FUNCTION AS 'VISION'
+    //CHASER 'VISION'
+
     void VisionRayCasting()
     {
+        
+        Vector3 chaserPlayerAngle = chaser.forward * Vector3.Angle(chaser.position, player.position); // Generates angle between player and Chaser
 
-        float angleOffset = -90 - rayAngleIncrement; //Starts off the angle at the far left, increments by 15 so angleOffset actually starts at -90;
+        Quaternion spreadRight = Quaternion.AngleAxis(visionAngle, new Vector3(0, 1, 0)); //Creates the right and left angles for the Range of Chaser's LOS
+        Quaternion spreadLeft = Quaternion.AngleAxis(-visionAngle, new Vector3(0, 1, 0));
 
-        float rayLength = 1; // sets the Initial Length of the First Ra
-        rayDistanceIncrement = Mathf.Abs(rayDistanceIncrement); //makes the Distance Increment Positive so that it starts off correctly
+        //Generating a normalised value of the LOS Angles as a Vector3 with no Magnitude
+        Vector3 LOSAngleRight = spreadRight * chaserPlayerAngle;
+        float disRight = LOSAngleRight.magnitude;
+        LOSAngleRight = LOSAngleRight / disRight;
 
 
-        while (angleOffset != 90) // all the rays from -90 to 90 are procedurally generated
+        Vector3 LOSAngleLeft = spreadLeft * chaserPlayerAngle;
+        float disLeft = LOSAngleLeft.magnitude;
+        LOSAngleLeft = LOSAngleLeft / disLeft;
+
+        //Gets the angle of the Player
+        float playerAngle = Vector3.Angle(chaser.transform.forward, player.position - transform.position);
+
+        if (playerAngle < visionAngle && playerAngle > -visionAngle) // If player is within bounds of LOS
         {
-            if (angleOffset == 0) // If the ray is pointing forward, make the raydistance increment negative so that the rays start getting shorter again
-            {
-                rayDistanceIncrement = -rayDistanceIncrement;
-            }
-
-            rayLength += rayDistanceIncrement; //increase / decrease the ray by the distance Increment
-
-            angleOffset += rayAngleIncrement; //Incrememnts the angleOffset to further generate all the rays
-
-            Quaternion spreadAngle = Quaternion.AngleAxis(angleOffset, new Vector3(0, 1, 0)); // makes an angleOffset based off the Origin of the Y axis multiplied by the current offset
-            Vector3 newAngle = spreadAngle * chaser.forward; //creates a new angle that rotates spreadAngleOffset so that it matches the current rotation of the chaser
-
-            RaycastHit hit;            //creating a hit variable to store the collision data of the ray in
-
             
+            RaycastHit hit; //Creates a hit variable for the Raycast
+            // Normalise the direction
 
-            if (Physics.Raycast(chaser.position, newAngle, out hit, rayLength)) // Checks if the Ray has hit something
+            Vector3 angleToPlayer = player.position - transform.position;
+            float distance = angleToPlayer.magnitude;
+            Vector3 direction = angleToPlayer / distance;
+
+
+
+          
+
+            if (Physics.Raycast(chaser.position, direction, out hit, visionLength)) // Checks if the Ray has hit something
             {
-                HasHitPlayer(hit);
-                Debug.DrawRay(chaser.position, newAngle * hit.distance, Color.green);
+                HasHitPlayer(hit); // Checks if the player has been hit
+                Debug.DrawRay(chaser.position, direction * hit.distance, Color.green);
             } else
             {
-                Debug.DrawRay(chaser.position, newAngle * rayLength, Color.green); //Draws the rays for debugging purposes - uses hit distance to indicate where the ray has actually hit
+                Debug.DrawRay(chaser.position, direction * visionLength, Color.green);
             }
-            
-
-
-
         }
 
+       //Draw the LOS rays
+        Debug.DrawRay(chaser.position, LOSAngleRight * visionLength, Color.red);
+        Debug.DrawRay(chaser.position, LOSAngleLeft * visionLength, Color.red);
+
     }
+
+    
 
     void HasHitPlayer(RaycastHit hit)
     {
         if (hit.collider.tag == "Player") //Checks if the Navigation rays have hit the player
         {
             Debug.Log("Player came into our line of sight.");
-            ChaseTransition();
+            ChaseTransition(); // Transitions to Chase
         }
     }
     
 
     void ChasingLOSCheck()
     {
-        //Draws a raycast between the player and the Chaser
-        Vector3 LOSangle = chaser.forward * Vector3.Angle(chaser.position, player.position);
+        //Normalise the Angle to Player
+        Vector3 angleToPlayer = player.position - transform.position;
+        float distance = angleToPlayer.magnitude;
+        Vector3 direction = angleToPlayer / distance;
 
-        float rayLength = searchDistance;
-               
 
         RaycastHit hit;
 
-        if (Physics.Raycast(chaser.position, LOSangle, out hit, rayLength)) 
+        if (Physics.Raycast(chaser.position, direction, out hit, searchDistance)) 
 
         {
             if(hit.collider.tag != "Player") // If there is no more LOS between chaser and player, go into Searching mode
@@ -183,8 +191,11 @@ public class Chaser : LivingCreature {
                 SearchTransition();
             }
             
+        } else
+        {
+            SearchTransition();
         }
-        Debug.DrawRay(chaser.position, LOSangle, Color.red);
+        Debug.DrawRay(chaser.position, direction * searchDistance, Color.red);
 
     }
 
@@ -206,7 +217,7 @@ public class Chaser : LivingCreature {
                 gotPlayerPos = true;
             }
 
-            Debug.Log("Reached the Breacrumb, about to rotate!");
+            
 
             //Sets up variables so that Chaser can look in the player direction
             Vector3 targetDir = lookAtPlayerPosWhenSearchPos - transform.position;
