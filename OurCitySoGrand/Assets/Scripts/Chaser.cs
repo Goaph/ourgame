@@ -18,6 +18,8 @@ public class Chaser : LivingCreature {
     public Material chase;
     public Material search;
 
+    
+
    
     public float lookRotationSpeed = 50f;
     public float speed = 10f;
@@ -28,6 +30,8 @@ public class Chaser : LivingCreature {
 
     public float visionAngle = 20f;
     public float visionLength = 10f;
+
+    public bool shouldJump = false;
     
     
     private bool searchBreadCrumb = false;
@@ -76,9 +80,17 @@ public class Chaser : LivingCreature {
 
     }
 
-    
+    private void FixedUpdate()
+    {
+        if(shouldJump == true)
+        {
+            shouldJump = false;
+            Jump();
+        }
+    }
 
-        
+
+
     //PATROLLING BETWEEN TWO GOALS
     void NavMeshPatrolCheck ()
     {
@@ -236,6 +248,12 @@ public class Chaser : LivingCreature {
         }
 
         
+    }
+
+    public void Jump()
+    {
+        chaser.GetComponent<Rigidbody>().AddForce(300, 400, 300, ForceMode.Impulse);
+        Debug.Log("Jumping");
     }
 
     private void ResetSearchVariables() //Resets all the variables for Search whenever there is a behavioural switch
