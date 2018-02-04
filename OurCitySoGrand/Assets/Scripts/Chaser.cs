@@ -19,6 +19,8 @@ public class Chaser : LivingCreature {
     public Material chase;
     public Material search;
 
+    public float explosionDamage = 50f;
+    public float explosionForce = 12f;
    
 
 
@@ -70,7 +72,7 @@ public class Chaser : LivingCreature {
 
     void Update()
     {
-        Debug.Log(behaviour);
+        
                 
         if(navMeshEnabled == true)
         {
@@ -137,6 +139,7 @@ public class Chaser : LivingCreature {
         if(collision.collider.tag == "Player")
         {
             Debug.Log("Hit the player!");
+            Explode(collision);
         }
 
         if (collision.collider.tag == "Terrain")
@@ -144,11 +147,7 @@ public class Chaser : LivingCreature {
             isJumping = false;
         }
     }
-
     
-
-
-
 
     //PATROLLING BETWEEN TWO GOALS
     void NavMeshPatrolCheck ()
@@ -314,7 +313,21 @@ public class Chaser : LivingCreature {
         
     }
 
-    
+    void Explode(Collision collision)
+    {
+        
+        KillObject();
+        LivingCreature hitObj = collision.collider.transform.GetComponent<LivingCreature>(); //checks if the object hit is part of the LivingCreature Class
+        if (hitObj != null) // if it is part of the class, take damage
+        {
+
+            hitObj.TakeDamage(explosionDamage);
+            hitObj.KnockBackWhenShot(explosionForce);
+
+        }
+    }
+
+
 
     private void ResetSearchVariables() //Resets all the variables for Search whenever there is a behavioural switch
     {

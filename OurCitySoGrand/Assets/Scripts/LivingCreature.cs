@@ -4,17 +4,10 @@ using UnityEngine;
 public class LivingCreature : MonoBehaviour {
 
     public float health = 50f;
-    private float impactForce;
-    private bool shouldKnockBackInFixedUpdate = false;
+   
+    
 
-    private void FixedUpdate()
-    {
-        if (shouldKnockBackInFixedUpdate == true)
-        {
-            GetComponent<Rigidbody>().AddForce(FindObjectOfType<Camera>().transform.forward * impactForce, ForceMode.Impulse);
-            shouldKnockBackInFixedUpdate = false;
-        }
-    }
+    
 
     public void TakeDamage(float dmgAmt)
     {
@@ -29,8 +22,9 @@ public class LivingCreature : MonoBehaviour {
 
     public void KnockBackWhenShot(float force)
     {
-        shouldKnockBackInFixedUpdate = true;
-        impactForce = force;
+        
+        
+        GetComponent<Rigidbody>().AddForce(FindObjectOfType<Camera>().transform.forward * force, ForceMode.Impulse);
     }
 
     public void KillObject()
