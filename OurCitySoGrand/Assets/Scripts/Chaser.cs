@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Chaser : LivingCreature {
 
     public Rigidbody rb;
+    public ParticleSystem explosion;  
 
     public Transform chaser;
     public Transform player;
@@ -59,8 +60,10 @@ public class Chaser : LivingCreature {
 
     private void Start()
     {
-        
-        
+        var emission = FindObjectOfType<Chaser>().explosion.emission;
+        emission.enabled = false;
+
+
         PatrolTransition();
         agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
         currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
@@ -315,7 +318,7 @@ public class Chaser : LivingCreature {
 
     void Explode(Collision collision)
     {
-        
+       
         KillObject();
         LivingCreature hitObj = collision.collider.transform.GetComponent<LivingCreature>(); //checks if the object hit is part of the LivingCreature Class
         if (hitObj != null) // if it is part of the class, take damage

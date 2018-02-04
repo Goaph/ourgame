@@ -28,7 +28,11 @@ public class LivingCreature : MonoBehaviour {
     }
 
     public void KillObject()
-    {       
+    {
+        var emission = FindObjectOfType<Chaser>().explosion.emission;
+        emission.enabled = true;
+        FindObjectOfType<Chaser>().transform.DetachChildren();
+        FindObjectOfType<Chaser>().explosion.Play();
         Destroy(gameObject); //Destroys the object
     }
 }
