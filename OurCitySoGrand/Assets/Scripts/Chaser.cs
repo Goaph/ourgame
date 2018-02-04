@@ -5,7 +5,8 @@ using UnityEngine.AI;
 
 public class Chaser : LivingCreature {
 
-    
+    public Rigidbody rb;
+
     public Transform chaser;
     public Transform player;
     public Transform patrolGoal1;
@@ -18,9 +19,10 @@ public class Chaser : LivingCreature {
     public Material chase;
     public Material search;
 
-    
 
-   
+
+    public float JumpForward = 300f;
+    public float JumpUp = 300f;
     public float lookRotationSpeed = 50f;
     public float speed = 10f;
     public float patrolSwitchDistance = 3f;
@@ -31,11 +33,12 @@ public class Chaser : LivingCreature {
     public float visionAngle = 20f;
     public float visionLength = 10f;
 
-    public bool shouldJump = false;
-    
-    
+
+    private bool isJumping = false;
+   
     private bool searchBreadCrumb = false;
     private bool gotPlayerPos = false;
+    private bool navMeshEnabled = true;
 
     private Vector3 lookAtPlayerPosWhenSearchPos = Vector3.forward;
     
@@ -49,45 +52,77 @@ public class Chaser : LivingCreature {
     private void Start()
     {
         
+        
         PatrolTransition();
         agent = GetComponent<NavMeshAgent>(); //sets the agent variable to a navmesh agent
         currentPatrol = patrolGoal1; // sets the current patrol to patrolgoal1
         agent.SetDestination(currentPatrol.position); // sets the destination to current patrol
+        
+    }
+
+
+
+    void Update()
+    {     
+                
+        if(navMeshEnabled == true)
+        {
+            if (behaviour == Behaviours.patrol)
+            {
+                NavMeshPatrolCheck();
+                VisionRayCasting();
+
+            }
+            else if (behaviour == Behaviours.chase)
+            {   
+                PlayerChase();
+            }
+            else if (behaviour == Behaviours.search)
+            {
+                SearchBehaviour();
+                VisionRayCasting();
+            }
+
+            ResetSearchVariables();
+        }   
+    }
+    
+    private void FixedUpdate()
+    {
+        Debug.Log(transform.forward);
+        if (Input.GetButtonDown("Jump") && isJumping == false)
+        {
+           
+            Jump();
+
+
+        }
+
+        navMeshEnabled = !isJumping;
+        gameObject.GetComponent<NavMeshAgent>().enabled = navMeshEnabled;
+
+
+
+    }
+
+    void Jump()
+    {
+        isJumping = true;
+       
+
+        rb.AddForce((transform.forward * JumpForward) + (Vector3.up * JumpUp), ForceMode.Impulse);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.tag == "Terrain")
+        {
+            isJumping = false;
+        }
     }
 
     
 
-    void Update ()
-    {
-               
-        if (behaviour == Behaviours.patrol)
-        {
-            NavMeshPatrolCheck();
-            VisionRayCasting();
-
-        } else if (behaviour == Behaviours.chase)
-        {
-            PlayerChase();
-        } else if (behaviour == Behaviours.search)
-        {
-            SearchBehaviour();
-            VisionRayCasting();
-        }
-
-        ResetSearchVariables();
-
-
-
-    }
-
-    private void FixedUpdate()
-    {
-        if(shouldJump == true)
-        {
-            shouldJump = false;
-            Jump();
-        }
-    }
 
 
 
@@ -198,6 +233,7 @@ public class Chaser : LivingCreature {
         if (Physics.Raycast(chaser.position, direction, out hit, searchDistance)) 
 
         {
+
             if(hit.collider.tag != "Player") // If there is no more LOS between chaser and player, go into Searching mode
             {
                 SearchTransition();
@@ -250,11 +286,7 @@ public class Chaser : LivingCreature {
         
     }
 
-    public void Jump()
-    {
-        chaser.GetComponent<Rigidbody>().AddForce(300, 400, 300, ForceMode.Impulse);
-        Debug.Log("Jumping");
-    }
+    
 
     private void ResetSearchVariables() //Resets all the variables for Search whenever there is a behavioural switch
     {
@@ -283,6 +315,8 @@ public class Chaser : LivingCreature {
         behaviour = Behaviours.patrol;
         gameObject.GetComponent<Renderer>().material = patrol;
     }
+
+    
 
 
     //TO DO: 

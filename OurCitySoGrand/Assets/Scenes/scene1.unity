@@ -4076,6 +4076,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 300
+  rb: {fileID: 479196296}
   chaser: {fileID: 479196300}
   player: {fileID: 380494782}
   patrolGoal1: {fileID: 1616949367}
@@ -4084,14 +4085,15 @@ MonoBehaviour:
   patrol: {fileID: 2100000, guid: 33fe7b0c30f1c394396a6bc443cc8be6, type: 2}
   chase: {fileID: 2100000, guid: 2bb1db45ee1dd4b438e7af2fcb657af5, type: 2}
   search: {fileID: 2100000, guid: 38eda64bcf4f4224aaa1e2d0e9f2ee88, type: 2}
+  JumpForward: 300
+  JumpUp: 300
   lookRotationSpeed: 50
   speed: 5
   patrolSwitchDistance: 3
   slerpRotateSpeed: 0.3
   searchDistance: 80
-  visionAngle: 30
+  visionAngle: 40
   visionLength: 40
-  shouldJump: 0
   behaviour: 0
 --- !u!54 &479196296
 Rigidbody:
@@ -4100,13 +4102,13 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 479196294}
   serializedVersion: 2
-  m_Mass: 3
-  m_Drag: 10
+  m_Mass: 50
+  m_Drag: 0.5
   m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!23 &479196297
 MeshRenderer:
@@ -4168,7 +4170,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 479196294}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 25.2, y: 0.75, z: 5.5}
+  m_LocalPosition: {x: 25.2, y: 0.75, z: -37.7}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_Children:
   - {fileID: 1231135538}
@@ -4187,8 +4189,8 @@ NavMeshAgent:
   m_Speed: 13
   m_Acceleration: 60
   avoidancePriority: 50
-  m_AngularSpeed: 60
-  m_StoppingDistance: 0
+  m_AngularSpeed: 120
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -5010,6 +5012,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chaser: {fileID: 479196295}
+  rb: {fileID: 479196296}
+  shouldJump: 0
+  jumpVelocity: 30
 --- !u!23 &1231135540
 MeshRenderer:
   m_ObjectHideFlags: 0

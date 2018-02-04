@@ -75,6 +75,8 @@ public class CameraMovements : MonoBehaviour
             transform.localRotation *= yRotation;
         }
     }
+
+
 }
  
 
