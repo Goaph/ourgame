@@ -19,6 +19,8 @@ public class Chaser : LivingCreature {
     public Material chase;
     public Material search;
 
+   
+
 
 
     public float JumpForward = 300f;
@@ -33,8 +35,12 @@ public class Chaser : LivingCreature {
     public float visionAngle = 20f;
     public float visionLength = 10f;
 
+    private float jumpTimer = 0;
+    private float expectedTime = 0;
 
+    public bool shouldJump = false;
     private bool isJumping = false;
+    private bool hasJumped = false;
    
     private bool searchBreadCrumb = false;
     private bool gotPlayerPos = false;
@@ -63,7 +69,8 @@ public class Chaser : LivingCreature {
 
 
     void Update()
-    {     
+    {
+        Debug.Log(behaviour);
                 
         if(navMeshEnabled == true)
         {
@@ -89,9 +96,18 @@ public class Chaser : LivingCreature {
     
     private void FixedUpdate()
     {
-        Debug.Log(transform.forward);
-        if (Input.GetButtonDown("Jump") && isJumping == false)
+        if(hasJumped == true)
         {
+            jumpTimer = Time.timeSinceLevelLoad;
+        }
+        
+
+        if (shouldJump == true && isJumping == false && jumpTimer >= expectedTime)
+        {
+            hasJumped = true;
+            expectedTime = jumpTimer + 1;
+            
+            shouldJump = false;
            
             Jump();
 
@@ -108,13 +124,21 @@ public class Chaser : LivingCreature {
     void Jump()
     {
         isJumping = true;
-       
 
-        rb.AddForce((transform.forward * JumpForward) + (Vector3.up * JumpUp), ForceMode.Impulse);
+        Vector3 angleToPlayer = player.position - transform.position;
+        float distance = angleToPlayer.magnitude;
+        Vector3 direction = angleToPlayer / distance;
+
+        rb.AddForce(((direction * JumpForward) + (Vector3.up * JumpUp)) * 1.15f, ForceMode.Impulse);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(collision.collider.tag == "Player")
+        {
+            Debug.Log("Hit the player!");
+        }
+
         if (collision.collider.tag == "Terrain")
         {
             isJumping = false;
@@ -281,6 +305,10 @@ public class Chaser : LivingCreature {
                 PatrolTransition();
             }
 
+        }
+        if(Vector3.Distance(player.position, chaser.position) < 2f)
+        {
+            ChaseTransition();
         }
 
         
